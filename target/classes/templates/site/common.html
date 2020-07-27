@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+</head>
+<body>
+<div class="container">
+    <!--公共导航栏-->
+    <div th:fragment="commonNav" class="row">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            　<div class="navbar-header">
+            　    <a th:href="@{/}" class="navbar-brand">sanBuzhi</a>
+            　</div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a th:href="@{/}">首页</a></li>
+                <li><a th:href="@{/}">专题</a></li>
+                <li><a th:href="@{/}">友链</a></li>
+                <li><a th:href="@{/}">归档</a></li>
+                <li class="dropdown">
+                    <a href="##" data-toggle="dropdown" class="dropdown-toggle">关于<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/}">个人</a></li>
+                        <li class="disabled"><a th:href="@{/}">发展</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form action="##" class="navbar-form navbar-left" rol="search">
+                <div class="form-group">
+                    <input th:type="text" class="form-control" placeholder="请输入关键词" />
+                </div>
+                <button th:type="submit" class="btn btn-default">搜索</button>
+            </form>
+        </div>
+    </div>
+
+    <!--公共分页栏-->
+    <div th:fragment="commonPagebar" class="row">
+        <nav style="text-align: center" class="navbar-fixed-bottom bg-info">
+            <div class="form-inline row">
+                    <div class="form-group ">
+                        «
+                    </div>
+                    <div th:each="pageindex:${#numbers.sequence(1,articles.pages)}" class="form-group">
+                        <a class="btn btn-default" role="button" th:href="@{'/blog/page/'+${pageindex}}" th:text="${pageindex}"></a>
+                        <div th:if="${articles.pageNum} eq ${pageindex}">
+                            <p class="caret"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        »
+                    </div>
+            </div>
+        </nav>
+    </div>
+
+    <!--前后页-->
+    <div th:fragment="preBackPageBar" class="row">
+        <nav style="text-align: center" class="navbar-fixed-bottom">
+            <ul class="pagination form-inline">
+                <div th:if="${articlepre ne null}" class="form-group">
+                    <a th:href="@{'/blog/content/'+ ${articlepre.cid}}" th:text="${articlepre.title}"></a>
+                </div>
+                <上一篇|下一篇>
+                <div th:if="${articleback ne null}" class="form-group">
+                    <a th:href="@{'/blog/content/'+ ${articleback.cid}}" th:text="${articleback.title}"></a>
+                </div>
+            </ul>
+        </nav>
+    </div>
+
+</div>
+</body>

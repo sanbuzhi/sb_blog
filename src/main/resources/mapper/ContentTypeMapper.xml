@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanbuzhi.dao.ContentTypeDao">
+    <!--新增文章类型-->
+    <insert id="addType" parameterType="com.sanbuzhi.pojo.ContentTypeDomain">
+        insert into sb_blog_200725.t_contents_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            name,numbers
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{name, jdbcType=VARCHAR}, '1',
+        </trim>
+    </insert>
+
+    <!--删除文章类型-->
+    <delete id="deleteType">
+        delete from sb_blog_200725.t_contents_type
+        where ctypeid = #{ctypeId}
+    </delete>
+
+    <!--更新文章类型-->
+    <update id="updateType" parameterType="com.sanbuzhi.pojo.ContentTypeDomain">
+        update sb_blog_200725.t_contents_type
+        <set>
+            <if test="name != null">
+                name=#{name, jdbcType=VARCHAR},
+            </if>
+            <if test="numbers != null">
+                numbers=#{numbers, jdbcType=INTEGER},
+            </if>
+        </set>
+        where ctypeid = #{ctypeId, jdbcType=INTEGER}
+    </update>
+
+    <!--根据类型id查找类型-->
+    <select id="searchTypeById" resultType="com.sanbuzhi.pojo.ContentTypeDomain">
+        select * from
+        sb_blog_200725.t_contents_type as ct
+        where ct.ctypeid = #{ctypeId, jdbcType=INTEGER}
+    </select>
+
+    <!--根据类型名称查找类型-->
+    <select id="searchTypeByName" resultType="com.sanbuzhi.pojo.ContentTypeDomain">
+        select * from
+        sb_blog_200725.t_contents_type as ct
+        where ct.name = #{ctypeName, jdbcType=VARCHAR}
+    </select>
+
+    <!--给某文章类型对应的文章数量=>number+1-->
+    <update id="addNumber">
+        update sb_blog_200725.t_contents_type
+        set numbers=numbers + 1
+        where ctypeid = #{ctypeId, jdbcType=INTEGER}
+    </update>
+
+    <!--给某文章类型对应的文章数量=>number-1-->
+    <update id="subNumber">
+        update sb_blog_200725.t_contents_type
+        set numbers=numbers - 1
+        where ctypeid = #{ctypeId, jdbcType=INTEGER}
+    </update>
+</mapper>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Document</title>
+    <link th:rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.css}">
+    <link th:rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap-theme.css}">
+
+    <script th:src="@{/js/jquery-3.5.1.js}"></script>
+    <script th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+
+
+
+<div class="container">
+    <!--导航栏-->
+    <div th:include="site/common::commonNav"></div>
+
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span8 col-lg-offset-2">
+                    <h2>看不见我看不见我</h2>
+                    <th:block th:each="article : ${articles.list}">
+                        <h3><a th:href="@{'/blog/content/'+ ${article.cid}}"><th:block th:text="${article.title}"></th:block></a></h3>
+                        <p><th:block th:text="${article.created}"></th:block>
+                            [作者:<th:block th:text="${article.authorId}"></th:block>]/
+                            [点击:<th:block th:text="${article.clicks}"></th:block>]/
+                            [评论:<th:block th:text="${article.commentsNum}"></th:block>]
+                        </p><br/>
+                        <p><th:block th:text="${article.slug}"></th:block></p>
+                        <br/>
+                    </th:block>
+                    <h2>看不见我看不见我</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--分页栏-->
+    <div th:include="site/common::commonPagebar"></div>
+
+</div>
+
+</body>
+
+
+</html>

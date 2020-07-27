@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <!-- css -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<style>
+    html,body{
+        width:100%;
+        height:100%;
+
+        margin:0px;
+    }
+    #main{
+        width:100%;
+        height:100%;
+        /* background:red;*/
+        display:flex;
+        flex-wrap: wrap;
+        flex-direction:row;
+        justify-content: start;
+    }
+    .top-head{
+        width: 100%;
+        height: 10%;
+        /* background: orange;*/
+        display:flex;
+        flex-wrap: no-wrap;
+        justify-content:center;
+    }
+    .left-menu{
+        width:12%;
+        height: 90%;
+        /*background:yellow;*/
+    }
+    .right-content{
+        width: 88%;
+        height:90%;
+        /*   background:blue;*/
+    }
+    #logo{
+        width:10%;
+        height:100%;
+        line-height:80px;
+        /*background:purple;*/
+    }
+    #title{
+        width:50%;
+        font-size: 28px;
+        text-align:center;
+        line-height: 80px;
+        /*background:#eee;*/
+    }
+    #per-mes{
+        width:20%;
+        height:100%;
+        line-height: 80px;
+        /*background:green;*/
+    }
+    li{
+        list-style:none;
+    }
+
+    a{
+        text-decoration: none;
+    }
+    a:focus, a:hover {
+        color: #23527c;
+        text-decoration: none;
+    }
+    li:hover{
+        list-style:none;
+    }
+
+</style>
+<body>
+<div id="main">
+    <div class="top-head">
+        <div id="logo">logo</div>
+        <div id="title">xxx后台管理系统</div>
+        <div id="per-mes">您好，admin。欢迎您使用后台管理系统！ </div>
+    </div>
+
+    <div class="left-menu">
+        <!-- 侧边栏标签页 -->
+        <ul class="nav nav-stacked">
+            <!-- 侧边栏选项 -->
+            <li role="presentation" class="active">
+                <!-- 选项控制data-target对应的显隐 -->
+                <a href="#" data-toggle="collapse" data-target="#list">商品管理</a>
+                <!-- 隐藏的详细菜单 -->
+                <ul id="list" class="collapse in">
+                    <li class="active">
+                        <a href="">
+                            操作一
+                        </a>
+                    </li>
+                    <li><a href="">操作二</a></li>
+                </ul>
+            </li>
+            <li role="presentation"><a href="#" data-toggle="collapse" data-target="#list1">Profile</a>
+                <ul id="list1" class="collapse in">
+                    <li class="active">
+                        <a href="">
+                            操作一
+                        </a>
+                    </li>
+                    <li><a href="">操作二</a></li>
+                </ul>
+            </li>
+            <li role="presentation"><a href="#">Messages</a></li>
+        </ul>
+    </div>
+    <div class="right-content">
+
+        <div style="margin:10px;">
+            <ol class="breadcrumb">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Library</a></li>
+                <li class="active">Data</li>
+            </ol>
+            <p>这里是内容</p>
+    </div>
+</div>
+</body>
+
+</html>
