@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Document</title>
+    <link th:rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.css}">
+    <link th:rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap-theme.css}">
+
+    <script th:src="@{/js/jquery-3.5.1.js}"></script>
+    <script th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+
+
+
+<div class="container">
+    <!--导航栏-->
+    <div th:include="site/common::commonNav"></div>
+
+    <!--内容展示-->
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span8 col-lg-offset-2 panel panel-default">
+                    <h2 class="panel-heading"><th:block th:text="${article.title}"></th:block></a></h2>
+                    <div class="panel panel-heading">
+                    <p><th:block th:text="${article.created}"></th:block>
+                        [作者:<th:block th:text="${article.authorId}"></th:block>]/
+                        [点击:<th:block th:text="${article.clicks}"></th:block>]/
+                        [评论:<th:block th:text="${article.commentsNum}"></th:block>]
+                    </p><br/><br/>
+                    <p><th:block th:text="${article.content}"></th:block></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--评论列表-->
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span8 col-lg-offset-2 panel panel-default">
+                    <h4 class="panel-heading">评论列表</h4>
+                    <th:block th:each="comment : ${comments}">
+                        <p><th:block th:text="${comment.created}"></th:block>
+                            [评论者:<th:block th:text="${comment.authorName}"></th:block>]/
+                            [邮件:<th:block th:text="${comment.email}"></th:block>]/
+                        </p>
+                        <p><th:block th:text="${comment.content}"></th:block></p><br/>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--评论-->
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span8 col-lg-offset-2 panel panel-default">
+                    <form class="panel-heading" method="post" th:action="@{/addcomment}">
+                        <h4>发表评论</h4>
+                        <div class="form-inline">
+                            <input type="text" name="cid" hidden="hidden" th:value="${article.cid}">
+                            <input type="text" name="authorName" class="form-group" placeholder="用户名">
+                            <input type="email" name="email" class="form-group" placeholder="邮箱">
+                        </div>
+                        <input type="text" name="content" required maxlength="100"><br/>
+                        <input type="submit">
+                    </form>
+                </div>
+                <br/><br/><br/><br/>
+            </div>
+        </div>
+    </div>
+
+
+    <!--分页栏-->
+    <div th:include="site/common::preBackPageBar"></div>
+
+</div>
+
+</body>
+
+
+</html>
