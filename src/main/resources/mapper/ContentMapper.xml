@@ -79,18 +79,76 @@
     </select>
 
     <!-- 添加文章 -->
+    <sql id="key">
+        <trim suffixOverrides=",">
+            <if test="title!=null">
+                title,
+            </if>
+            <if test="titlePic!=null">
+                titlePic,
+            </if>
+            <if test="slug!=null">
+                slug,
+            </if>
+            <if test="created!=null">
+                created,
+            </if>
+            <if test="content!=null">
+                content,
+            </if>
+            <if test="authorId!=null">
+                authorId,
+            </if>
+            <if test="status!=null">
+                status,
+            </if>
+            <if test="clicks!=null">
+                clicks,
+            </if>
+            <if test="commentsNum!=null">
+                commentsNum,
+            </if>
+            <if test="allowComment!=null">
+                allowComment,
+            </if>
+        </trim>
+    </sql>
+    <sql id="value">
+        <trim suffixOverrides=",">
+            <if test="title!=null">
+                #{title, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="titlePic!=null">
+                #{titlePic,jdbcType=VARCHAR},
+            </if>
+            <if test="slug!=null">
+                #{slug, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created!=null">
+                #{created, jdbcType=VARCHAR},
+            </if>
+            <if test="content!=null">
+                #{content, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="authorId!=null">
+                #{authorId, jdbcType=INTEGER},
+            </if>
+            <if test="status!=null">
+                #{status, jdbcType=VARCHAR},
+            </if><if test="clicks!=null">
+                #{clicks, jdbcType=INTEGER},
+            </if><if test="commentsNum!=null">
+                #{commentsNum, jdbcType=INTEGER},
+            </if><if test="allowComment!=null">
+                #{allowComment, jdbcType=INTEGER},
+            </if>
+        </trim>
+    </sql>
     <insert id="addArticle" parameterType="com.sanbuzhi.pojo.ContentDomain" useGeneratedKeys="true" keyProperty="cid">
         INSERT INTO sb_blog_200725.t_contents
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            title, titlePic, slug, created, content, authorId,
-            status, clicks, commentsNum, allowComment,
-        </trim>
-        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
-            #{title, jdbcType=VARCHAR}, #{titlePic, jdbcType=VARCHAR}, #{slug, jdbcType=VARCHAR}, #{created, jdbcType=VARCHAR},
-            #{content, jdbcType=LONGVARCHAR}, #{authorId, jdbcType=INTEGER},
-            #{status, jdbcType=VARCHAR}, #{clicks, jdbcType=INTEGER}, #{commentsNum, jdbcType=INTEGER},
-            #{allowComment, jdbcType=INTEGER},
-        </trim>
+        (<include refid="key"/>)
+        value
+        (<include refid="value"/>)
     </insert>
 
 

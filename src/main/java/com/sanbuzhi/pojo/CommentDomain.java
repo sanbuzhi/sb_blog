@@ -19,20 +19,17 @@ public class CommentDomain {
 
 
     /*评论的时间戳*/
-    private Integer created;
+    private String created;
 
-    /*评论者作者的id*/
-    private Integer authorId;
-
-    /*评论者ip地址*/
-    private String ip;
-    /*评论者客户端*/
-    private String agent;
+    /*评论者作者名字*/
+    private String authorName;
+    /*评论者邮件*/
+    private String email;
 
     /*评论状态*/
     private String status;
     /*父级评论*/
-    private Integer parent;
+    private Integer parentcoid;
 
     private static final long serialVersionUID = 1L;
 

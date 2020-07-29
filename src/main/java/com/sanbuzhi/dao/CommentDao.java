@@ -17,6 +17,11 @@ public interface CommentDao {
     CommentDomain getCommentByCoid(@Param("coid") Integer coid);
 
     /**
+     * 根据文章主键查找评论
+     */
+    CommentDomain getCommentByCid(@Param("cid") Integer cid);
+
+    /**
      * 根据关联主键-文章编号查找评论
      */
     List<CommentDomain> getCommentsByCId(@Param("cid") Integer cid);

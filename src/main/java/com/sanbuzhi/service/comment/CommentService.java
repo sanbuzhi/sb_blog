@@ -14,17 +14,17 @@ public interface CommentService {
     /**
      * 新增评论
      */
-    int addComment(CommentDomain commentDomain);
+    void addComment(CommentDomain commentDomain);
 
     /**
      * 删除评论
      */
-    int deleteComment(Integer coid);
+    void deleteComment(Integer coid);
 
     /**
      * 更新评论的状态
      */
-    int updateCommentStatus(Integer coid, String status);
+    void updateCommentStatus(Integer coid, String status);
 
 
     /**

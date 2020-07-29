@@ -3,14 +3,10 @@ package com.sanbuzhi.service.content.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sanbuzhi.constant.ErrorConstant;
-import com.sanbuzhi.constant.Types;
 import com.sanbuzhi.constant.WebConst;
 import com.sanbuzhi.dao.*;
 import com.sanbuzhi.exception.BusinessException;
-import com.sanbuzhi.pojo.CommentDomain;
-import com.sanbuzhi.pojo.ContentDomain;
-import com.sanbuzhi.pojo.ContentTypeDomain;
-import com.sanbuzhi.pojo.ContentTypeRelDomain;
+import com.sanbuzhi.pojo.*;
 import com.sanbuzhi.pojo_short.cond.ContentCond;
 import com.sanbuzhi.service.content.ContentService;
 import org.apache.commons.lang3.StringUtils;
@@ -22,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Created by Donghua.Chen on 2018/4/29.
- */
 @Service
 public class ContentServiceImpl implements ContentService {
 
@@ -40,6 +33,11 @@ public class ContentServiceImpl implements ContentService {
     @Autowired
     private ContentTypeRelDao contentTypeRelDao;
 
+    @Autowired
+    private ContentTagDao contentTagDao;
+
+    @Autowired
+    private ContentTagRelDao contentTagRelDao;
 
     /**
      * 添加文章的同时
@@ -67,13 +65,13 @@ public class ContentServiceImpl implements ContentService {
         //分类字段不为空
         if(null != type){
             String[] splitedType = type.split(";");
-            for(String stypename : splitedType){
+            for(String ctypename : splitedType){
                 //按名字从文章分类里找到此分类
-                ContentTypeDomain contentTypeDomain = contentTypeDao.searchTypeByName(stypename);
+                ContentTypeDomain contentTypeDomain = contentTypeDao.searchTypeByName(ctypename);
                 if(null != contentTypeDomain){
                     //说明存在此分类，先给此类型的文章数量+1
                     contentTypeDao.addNumber(contentTypeDomain.getCtypeid());
-                    // 往关联表添加关联
+                    // 再往关联表添加关联
                     ContentTypeRelDomain contentTypeRelDomain = new ContentTypeRelDomain();
                     contentTypeRelDomain.setCid(contentDomain.getCid());
                     contentTypeRelDomain.setCtypeid(contentTypeDomain.getCtypeid());
@@ -81,48 +79,49 @@ public class ContentServiceImpl implements ContentService {
                 }else {
                     //说明文章分类里没有此分类，则先创建此分类
                     ContentTypeDomain contentTypeDomain1 = new ContentTypeDomain();
-                    contentTypeDomain1.setName(stypename);
+                    contentTypeDomain1.setName(ctypename);//这里可以不用设置ctypeid
                     contentTypeDomain1.setNumbers(1);
                     contentTypeDao.addType(contentTypeDomain1);
-                    //再往关联表添加关联
+                    // 再往关联表添加关联
                     ContentTypeRelDomain contentTypeRelDomain = new ContentTypeRelDomain();
                     contentTypeRelDomain.setCid(contentDomain.getCid());
-                    contentTypeRelDomain.setCtypeid(contentTypeDomain.getCtypeid());
+                    ContentTypeDomain tmpCTD = contentTypeDao.searchTypeByName(ctypename);
+                    contentTypeRelDomain.setCtypeid(tmpCTD.getCtypeid());
                     contentTypeRelDao.addContentTypeRel(contentTypeRelDomain);
                 }
             }
         }
-        /**
         //标签字段不为空
         if(null != tag){
             String[] splitedTag = tag.split(";");
-            for(String stagname : splitedTag){
-                //按名字从文章分类里找到此分类
-                ContentTypeDomain contentTypeDomain = contentTypeDao.searchTypeByName(stagname);
-                if(null != contentTypeDomain){
+            for(String ctagname : splitedTag){
+                //按名字从文章标签里找到此标签
+                ContentTagDomain contentTagDomain = contentTagDao.searchTagByName(ctagname);
+                if(null != contentTagDomain){
                     //说明存在此分类，先给此类型的文章数量+1
-                    contentTypeDao.updateNumber(contentTypeDomain.getCtypeid());
-                    // 往关联表添加关联
-                    ContentTypeRelDomain contentTypeRelDomain = new ContentTypeRelDomain();
-                    contentTypeRelDomain.setCid(contentDomain.getCid());
-                    contentTypeRelDomain.setCtypeid(contentTypeDomain.getCtypeid());
-                    contentTypeRelDao.addContentTypeRel(contentTypeRelDomain);
+                    contentTagDao.addNumber(contentTagDomain.getCtagid());
+                    // 再往关联表添加关联
+                    ContentTagRelDomain contentTagRelDomain = new ContentTagRelDomain();
+                    contentTagRelDomain.setCid(contentDomain.getCid());
+                    contentTagRelDomain.setCtagid(contentTagDomain.getCtagid());
+                    contentTagRelDao.addContentTagRel(contentTagRelDomain);
                 }else {
                     //说明文章分类里没有此分类，则先创建此分类
-                    ContentTypeDomain contentTypeDomain1 = new ContentTypeDomain();
-                    contentTypeDomain1.setName(stypename);
-                    contentTypeDomain1.setNumbers(1);
-                    contentTypeDao.addType(contentTypeDomain1);
-                    //再往关联表添加关联
-                    ContentTypeRelDomain contentTypeRelDomain = new ContentTypeRelDomain();
-                    contentTypeRelDomain.setCid(contentDomain.getCid());
-                    contentTypeRelDomain.setCtypeid(contentTypeDomain.getCtypeid());
-                    contentTypeRelDao.addContentTypeRel(contentTypeRelDomain);
+                    ContentTagDomain contentTagDomain1 = new ContentTagDomain();
+                    contentTagDomain1.setName(ctagname);
+                    contentTagDomain1.setNumbers(1);
+                    contentTagDao.addTag(contentTagDomain1);
+                    // 再往关联表添加关联
+                    ContentTagRelDomain contentTagRelDomain = new ContentTagRelDomain();
+                    contentTagRelDomain.setCid(contentDomain.getCid());
+                    ContentTagDomain tmpCTD = contentTagDao.searchTagByName(ctagname);
+                    contentTagRelDomain.setCtagid(tmpCTD.getCtagid());
+                    contentTagRelDao.addContentTagRel(contentTagRelDomain);
                 }
             }
         }
-        **/
     }
+
 
     /**
      *  删除文章的同时
@@ -160,6 +159,11 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public void updateArticleHitCountById(Integer cid) {
         contentDao.updateArticleHitCountById(cid);
+    }
+
+    @Override
+    public void updateArticleCommentCountById(Integer cid) {
+        contentDao.updateArticleCommentCountById(cid);
     }
 
 

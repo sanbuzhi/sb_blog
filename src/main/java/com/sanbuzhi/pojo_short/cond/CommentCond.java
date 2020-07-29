@@ -14,5 +14,5 @@ public class CommentCond {
     /*结束时间戳*/
     private Integer endTime;
     /*父评论编号*/
-    private Integer parent;
+    private Integer parentcoid;
 }

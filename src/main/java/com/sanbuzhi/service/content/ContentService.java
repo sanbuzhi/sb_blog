@@ -31,6 +31,11 @@ public interface ContentService {
     void updateArticleHitCountById(Integer cid);
 
     /**
+     * 文章评论量+1
+     */
+    void updateArticleCommentCountById(Integer cid);
+
+    /**
      * 根据编号获取文章
      * @param cid
      * @return

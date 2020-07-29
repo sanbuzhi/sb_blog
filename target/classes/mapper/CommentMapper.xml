@@ -2,73 +2,100 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sanbuzhi.dao.CommentDao">
 
-    <sql id="BASE_TABLE">
-        t_comments
-    </sql>
 
-    <!-- 基本列 -->
-    <sql id="BASE_COLUMN">
-        cm.coid, cm.cid, cm.created, cm.author, cm.authorId, cm.ownerId, cm.mail,
-        cm.url, cm.ip, cm.agent, cm.type, cm.status, cm.parent, cm.content
+    <sql id="key">
+        <trim suffixOverrides=",">
+            <if test="content!=null">
+                content,
+            </if>
+            <if test="cid!=null">
+                cid,
+            </if>
+            <if test="created!=null">
+                created,
+            </if>
+            <if test="authorName!=null">
+                authorName,
+            </if>
+            <if test="email!=null">
+                email,
+            </if>
+            <if test="status!=null">
+                status,
+            </if>
+            <if test="parentcoid!=null">
+                parentcoid,
+            </if>
+
+        </trim>
+    </sql>
+    <sql id="value">
+        <trim suffixOverrides=",">
+            <if test="content!=null">
+                #{content, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="cid!=null">
+                #{cid,jdbcType=INTEGER},
+            </if>
+            <if test="created!=null">
+                #{created, jdbcType=VARCHAR},
+            </if>
+            <if test="authorName!=null">
+                #{authorName, jdbcType=VARCHAR},
+            </if>
+            <if test="email!=null">
+                #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="status!=null">
+                #{status, jdbcType=VARCHAR},
+            </if>
+            <if test="parentcoid!=null">
+                #{parentcoid, jdbcType=INTEGER},
+            </if>
+
+        </trim>
     </sql>
 
     <!-- 新增评论 -->
     <insert id="addComment" parameterType="com.sanbuzhi.pojo.CommentDomain">
-        INSERT INTO
-        <include refid="BASE_TABLE"/>
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            cid, created, author, authorId, ownerId, mail,
-            url, ip, agent, type, status, parent, content,
-        </trim>
-        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
-            #{cid,jdbcType=INTEGER}, #{created, jdbcType=INTEGER},
-            #{author, jdbcType=VARCHAR}, #{authorId, jdbcType=INTEGER}, #{ownerId, jdbcType=INTEGER},
-            #{mail, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{ip, jdbcType=VARCHAR}, #{agent, jdbcType=VARCHAR},
-            #{type, jdbcType=VARCHAR}, #{status, jdbcType=VARCHAR}, #{parent, jdbcType=INTEGER}, #{content, jdbcType=LONGVARCHAR},
-        </trim>
+        INSERT INTO sb_blog_200725.t_comments
+        (<include refid="key"/>)
+        value
+        (<include refid="value"/>)
     </insert>
 
     <!-- 删除评论 -->
     <delete id="deleteComment">
-        DELETE FROM
-        <include refid="BASE_TABLE"/>
+        DELETE FROM sb_blog_200725.t_comments
         WHERE coid = #{coid, jdbcType=INTEGER}
     </delete>
 
     <!-- 更新评论的状态 -->
     <update id="updateCommentStatus">
-        UPDATE
-        <include refid="BASE_TABLE"/>
+        UPDATE sb_blog_200725.t_comments
         SET status = #{status, jdbcType=VARCHAR}
         WHERE coid = #{coid, jdbcType=INTEGER}
     </update>
 
     <select id="getCommentById" resultType="com.sanbuzhi.pojo.CommentDomain">
-        SELECT
-        <include refid="BASE_COLUMN"/>
-        FROM
-        <include refid="BASE_TABLE"/> AS cm
+        SELECT * FROM
+        sb_blog_200725.t_comments AS cm
         WHERE cm.coid = #{coid, jdbcType=INTEGER}
     </select>
 
     <!-- 根据文章的主键获取评论列表:只显示正常的评论 -->
     <select id="getCommentsByCId" resultType="com.sanbuzhi.pojo.CommentDomain">
-        SELECT
-        <include refid="BASE_COLUMN"/>
-        FROM
-        <include refid="BASE_TABLE"/> AS cm
+        SELECT * FROM
+        sb_blog_200725.t_comments AS cm
         WHERE cm.cid =  #{cid,jdbcType=INTEGER}
-        AND cm.status = 'approved'
+        /*AND cm.status = '通过'*/
         ORDER BY cm.created
     </select>
 
     <!-- 根据条件查找评论列表 -->
     <select id="getCommentsByCond" resultType="com.sanbuzhi.pojo.CommentDomain"
             parameterType="com.sanbuzhi.pojo_short.cond.CommentCond">
-        SELECT
-        <include refid="BASE_COLUMN"/>
-        FROM
-        <include refid="BASE_TABLE"/> AS cm
+        SELECT * FROM sb_blog_200725.t_comments AS cm
         <where>
             <if test="status != null">
                 AND cm.status = #{status, jdbcType=VARCHAR}
@@ -79,17 +106,15 @@
             <if test="endTime != null">
                 AND cm.created &lt;= #{endTime, jdbcType=INTEGER}
             </if>
-            <if test="parent != null">
-                AND cm.parent = #{parent,jdbcType=INTEGER}
+            <if test="parentcoid != null">
+                AND cm.parentcoid = #{parentcoid,jdbcType=INTEGER}
             </if>
         </where>
         ORDER BY cm.created
     </select>
 
     <select id="getCommentsCount" resultType="java.lang.Long">
-        SELECT count(*)
-        FROM
-        <include refid="BASE_TABLE"/>
+        SELECT count(*) FROM sb_blog_200725.t_comments
     </select>
 
 

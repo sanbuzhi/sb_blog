@@ -25,7 +25,6 @@
         <div class="span12">
             <div class="row">
                 <div class="span8 col-lg-offset-2">
-                    <h2>看不见我看不见我</h2>
                     <th:block th:each="article : ${articles.list}">
                         <h3><a th:href="@{'/blog/content/'+ ${article.cid}}"><th:block th:text="${article.title}"></th:block></a></h3>
                         <p><th:block th:text="${article.created}"></th:block>

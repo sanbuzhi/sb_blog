@@ -32,24 +32,25 @@
                 <button th:type="submit" class="btn btn-default">搜索</button>
             </form>
         </div>
+        <h2>看不见我</h2>
     </div>
 
     <!--公共分页栏-->
     <div th:fragment="commonPagebar" class="row">
         <nav style="text-align: center" class="navbar-fixed-bottom bg-info">
             <div class="form-inline row">
-                    <div class="form-group ">
-                        «
+                <div class="form-group ">
+                    «
+                </div>
+                <div th:each="pageindex:${#numbers.sequence(1,articles.pages)}" class="form-group">
+                    <a class="btn btn-default" role="button" th:href="@{'/blog/page/'+${pageindex}}" th:text="${pageindex}"></a>
+                    <div th:if="${articles.pageNum} eq ${pageindex}">
+                        <p class="caret"></p>
                     </div>
-                    <div th:each="pageindex:${#numbers.sequence(1,articles.pages)}" class="form-group">
-                        <a class="btn btn-default" role="button" th:href="@{'/blog/page/'+${pageindex}}" th:text="${pageindex}"></a>
-                        <div th:if="${articles.pageNum} eq ${pageindex}">
-                            <p class="caret"></p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        »
-                    </div>
+                </div>
+                <div class="form-group">
+                    »
+                </div>
             </div>
         </nav>
     </div>

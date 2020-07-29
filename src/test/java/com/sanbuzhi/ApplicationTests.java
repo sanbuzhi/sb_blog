@@ -1,11 +1,14 @@
 package com.sanbuzhi;
 
 import com.github.pagehelper.PageInfo;
+import com.sanbuzhi.dao.CommentDao;
 import com.sanbuzhi.dao.ContentDao;
 import com.sanbuzhi.dao.ContentTypeDao;
+import com.sanbuzhi.pojo.CommentDomain;
 import com.sanbuzhi.pojo.ContentDomain;
 import com.sanbuzhi.pojo.ContentTypeDomain;
 import com.sanbuzhi.pojo.UserDomain;
+import com.sanbuzhi.service.comment.CommentService;
 import com.sanbuzhi.service.content.impl.ContentServiceImpl;
 import com.sanbuzhi.service.user.UserService;
 import com.sanbuzhi.service.user.impl.UserServiceImpl;
@@ -52,18 +55,18 @@ public class ApplicationTests {
         ContentServiceImpl contentService = utils.getBean(ContentServiceImpl.class);
         for(int i = 0;i< 10;i++){
             ContentDomain contentDomain = new ContentDomain();
-            contentDomain.setAllowComment(true);
+           /* contentDomain.setAllowComment(true);
             contentDomain.setAuthorId(111);
             contentDomain.setCid(124);
-            contentDomain.setCommentsNum(0);
+            contentDomain.setCommentsNum(0);*/
             contentDomain.setContent("这是内容1");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String systime= sdf.format(new Date()).split(" ")[0];
             contentDomain.setCreated(systime);
             contentDomain.setClicks(0);
-            contentDomain.setModified(null);
+            contentDomain.setModified(null);*/
             contentDomain.setTitle("这是标题1");
-            contentDomain.setTitlePic("这是图片链接");
+            /*contentDomain.setTitlePic("这是图片链接");*/
 
             contentService.addArticle(contentDomain, "类型1", "标签1");
         }
@@ -93,5 +96,39 @@ public class ApplicationTests {
         for(ContentDomain contentDomain:list){
             System.out.println(contentDomain);
         }
+    }
+
+    /*阅读量+1*/
+    @Test
+    public void test1(){
+        SpringUtils utils = new SpringUtils();
+        ContentServiceImpl contentService = utils.getBean(ContentServiceImpl.class);
+        contentService.updateArticleHitCountById(36);
+    }
+
+    /*新增评论*/
+    @Test
+    public void test21(){
+        SpringUtils utils = new SpringUtils();
+        CommentDao bean = utils.getBean(CommentDao.class);
+        CommentDomain commentDomain = new CommentDomain();
+        for(int i=0;i<3;i++){
+            commentDomain.setCid(36);
+            commentDomain.setContent("好");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String systime= sdf.format(new Date()).split(" ")[0];
+            commentDomain.setCreated(systime);
+            commentDomain.setStatus("通过");
+            bean.addComment(commentDomain);
+        }
+    }
+
+    /*根据cid获得评论列表*/
+    @Test
+    public void test22(){
+        SpringUtils utils = new SpringUtils();
+        CommentService bean = utils.getBean(CommentService.class);
+        List<CommentDomain> list = bean.getCommentsByCId(36);
+        System.out.println("list+" +list);
     }
 }
