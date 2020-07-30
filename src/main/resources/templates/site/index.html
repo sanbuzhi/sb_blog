@@ -28,7 +28,7 @@
                     <th:block th:each="article : ${articles.list}">
                         <h3><a th:href="@{'/blog/content/'+ ${article.cid}}"><th:block th:text="${article.title}"></th:block></a></h3>
                         <p><th:block th:text="${article.created}"></th:block>
-                            [作者:<th:block th:text="${article.authorId}"></th:block>]/
+                            [作者:<th:block th:text="${article.authorName}"></th:block>]/
                             [点击:<th:block th:text="${article.clicks}"></th:block>]/
                             [评论:<th:block th:text="${article.commentsNum}"></th:block>]
                         </p><br/>

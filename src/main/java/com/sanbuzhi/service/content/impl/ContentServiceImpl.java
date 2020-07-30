@@ -7,8 +7,14 @@ import com.sanbuzhi.constant.WebConst;
 import com.sanbuzhi.dao.*;
 import com.sanbuzhi.exception.BusinessException;
 import com.sanbuzhi.pojo.*;
+import com.sanbuzhi.pojo_short.ArticleTypeTag;
 import com.sanbuzhi.pojo_short.cond.ContentCond;
 import com.sanbuzhi.service.content.ContentService;
+import com.sanbuzhi.service.contenttype.ContentTypeService;
+import com.sanbuzhi.service.contenttyperel.ContentTypeRelService;
+import com.sun.xml.internal.ws.encoding.ContentType;
+import com.sun.xml.internal.ws.encoding.ContentTypeImpl;
+import net.bytebuddy.implementation.bind.ArgumentTypeResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,10 +22,17 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ContentServiceImpl implements ContentService {
+
+    @Autowired
+    private ContentTypeService contentTypeService;
+
+    @Autowired
+    private ContentTypeRelService contentTypeRelService;
 
     @Autowired
     private ContentDao contentDao;
@@ -136,21 +149,14 @@ public class ContentServiceImpl implements ContentService {
         if (null == cid)
             throw BusinessException.withErrorCode(ErrorConstant.Common.PARAM_IS_EMPTY);
         contentDao.deleteArticleById(cid);
-        //同时也要删除该文章下的所有评论
-        List<CommentDomain> comments = commentDao.getCommentsByCId(cid);
-        if (null != comments && comments.size() > 0){
-            comments.forEach(comment ->{
-                commentDao.deleteComment(comment.getCoid());
-            });
+        //同时文章下的类型数量-1，如果为0，则删除类型
+        List<Integer> ctypeids = contentTypeRelService.getCtypeid(cid);
+        System.out.println("ctypeids+"+ctypeids.toString());
+        for(Integer ct: ctypeids){
+            contentTypeService.subNumbers(ct);
         }
-        //删除标签和分类关联
-        contentTypeRelDao.deleteContentTypeRelByCid(cid);
-        //分类下的文章数量-1
-        List<Integer> ctypeids = contentTypeRelDao.getCtypeid(cid);
-        for(Integer ctypeid:ctypeids){
-            contentTypeDao.subNumber(ctypeid);
-        }
-
+        //最后删除文章类型关联表中cid对应的所有项
+        contentTypeRelService.deleteContentTypeRelByCid(cid);
     }
 
     /**
@@ -207,6 +213,42 @@ public class ContentServiceImpl implements ContentService {
         return pageInfo;
     }
 
+    @Override
+    public List<ContentDomain> getAllArticle() {
+        List<ContentDomain> articles = contentDao.getRecentlyArticle();
+        return articles;
+    }
+
+    @Override
+    public List<ArticleTypeTag> getAllArticleTypeTag() {
+        List<ContentDomain> articles = this.getAllArticle();
+        List<ArticleTypeTag> articleTypeTags = new ArrayList<>();
+        for(ContentDomain contentDomain: articles){
+            //将文章实体+对应类型拼接字符串+对应标签拼接字符串封装进ArticleTypeTag实体
+            ArticleTypeTag articleTypeTag = new ArticleTypeTag();
+            articleTypeTag.setContentDomain(contentDomain);//注入文章实体
+            //文章cid->关系表找到对应ctypeid列表->类型表找到类型实体列表
+            List<Integer> ctypeid = contentTypeRelDao.getCtypeid(contentDomain.getCid());
+            String strtypes = "";
+            for(Integer integer : ctypeid){
+                ContentTypeDomain contentTypeDomain = contentTypeDao.searchTypeById(integer);
+                strtypes += contentTypeDomain.getName()+" ";
+            }
+            articleTypeTag.setTypes(strtypes);//注入类型拼接成的字符串
+            //文章tag一样
+            List<Integer> ctagid = contentTagRelDao.getCtagid(contentDomain.getCid());
+            String strtags = "";
+            for(Integer integer : ctagid){
+                ContentTagDomain contentTagDomain = contentTagDao.searchTagById(integer);
+                strtags += contentTagDomain.getName() + " ";
+            }
+            articleTypeTag.setTags(strtags);//注入标签拼接城的字符串
+            articleTypeTags.add(articleTypeTag);
+        }
+        return articleTypeTags;
+    }
+
+
     /**
      * 获取查找到的文章的分页信息
      */
@@ -221,4 +263,5 @@ public class ContentServiceImpl implements ContentService {
     /**
      * 文章阅读量+1
      */
+
 }

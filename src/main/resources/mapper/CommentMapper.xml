@@ -55,7 +55,6 @@
 
         </trim>
     </sql>
-
     <!-- 新增评论 -->
     <insert id="addComment" parameterType="com.sanbuzhi.pojo.CommentDomain">
         INSERT INTO sb_blog_200725.t_comments
@@ -117,5 +116,8 @@
         SELECT count(*) FROM sb_blog_200725.t_comments
     </select>
 
+    <select id="getAllComment" resultType="com.sanbuzhi.pojo.CommentDomain">
+        select * from sb_blog_200725.t_comments order by created desc
+    </select>
 
 </mapper>

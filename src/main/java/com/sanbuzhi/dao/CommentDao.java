@@ -32,9 +32,14 @@ public interface CommentDao {
     List<CommentDomain> getCommentsByCond(CommentCond commentCond);
 
     /**
-     * 获取文章数量
+     * 获取评论数量
      */
     Long getCommentsCount();
+
+    /**
+     * 获取所有评论
+     */
+    List<CommentDomain> getAllComment();
 
     /**
      * 新增评论

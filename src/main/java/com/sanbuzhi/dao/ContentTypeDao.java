@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Mapper
 @Component
 public interface ContentTypeDao {
@@ -22,4 +24,6 @@ public interface ContentTypeDao {
     int addNumber(@Param("ctypeId") Integer ctypeId);
     //给某文章类型对应的文章数量=>number-1
     int subNumber(@Param("ctypeId") Integer ctypeId);
+    //获取所有文章类型
+    List<ContentTypeDomain> getAllCType();
 }

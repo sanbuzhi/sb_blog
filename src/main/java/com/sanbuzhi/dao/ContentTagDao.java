@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Mapper
 @Component
 public interface ContentTagDao {
@@ -23,4 +25,6 @@ public interface ContentTagDao {
     int addNumber(@Param("ctagid") Integer ctagid);
     //给某文章类型对应的文章数量=>number-1
     int subNumber(@Param("ctagid") Integer ctagid);
+    //获取所有的标签
+    List<ContentTagDomain> getAllTags();
 }

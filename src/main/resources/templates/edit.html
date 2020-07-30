@@ -12,16 +12,32 @@
     <header>
         <h1>编辑文章</h1>
     </header>
-    <form name="mdEditorForm">
-        <div>
-            <input name="title" placeholder="title">
-            <input name="type" placeholder="type">
-            <input name="tag" placeholder="tag">
-        </div>
-        <div id="test-editormd">
-            <textarea name="content" id="text" style="display:none;"> </textarea>
-        </div>
-    </form>
+    <div class="col-md-12">
+        <form name="mdEditorForm" role="form" id="articleForm" novalidate="novalidate">
+            <input type="hidden" name="types" id="types"/>
+            <input type="hidden" name="tags" id="tags"/>
+            <div id="test-editormd">
+                <textarea name="content" id="text" style="display:none;"> </textarea>
+            </div>
+            <div class="col-md-4 col-md-offset-4">
+                <input name="title" placeholder="title">
+                <input name="type" placeholder="type">
+                <input name="tag" placeholder="tag">
+            </div>
+
+            <div class="text-right">
+                <a class="btn btn-default waves-effect waves-light" th:href="@{/admin/article}">返回列表</a>
+                <button type="button" class="btn btn-primary waves-effect waves-light"
+                        onclick="subArticle('publish');">
+                    保存文章
+                </button>
+                <button type="button" class="btn btn-warning waves-effect waves-light"
+                        onclick="subArticle('draft');">
+                    存为草稿
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/editormd.min.js"></script>
@@ -31,7 +47,7 @@
     $(function() {
         testEditor = editormd("test-editormd", {
             width   : "90%",
-            height  : 640,
+            height  : 440,
             syncScrolling : "single",
             path    : "../lib/",
             /*不能带static，即../static/lib/否则报错*/

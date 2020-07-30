@@ -2,7 +2,10 @@ package com.sanbuzhi.service.content;
 
 import com.github.pagehelper.PageInfo;
 import com.sanbuzhi.pojo.ContentDomain;
+import com.sanbuzhi.pojo_short.ArticleTypeTag;
 import com.sanbuzhi.pojo_short.cond.ContentCond;
+
+import java.util.List;
 
 /**
  * 文章业务层
@@ -57,6 +60,17 @@ public interface ContentService {
      */
     PageInfo<ContentDomain> getRecentlyArticle(int pageNum, int pageSize);
 
+
+    /**
+     * 获取所有文章
+     */
+    List<ContentDomain> getAllArticle();
+
+    /**
+     * 获取所有文章+类型+标签
+     */
+    List<ArticleTypeTag> getAllArticleTypeTag();
+
     /**
      * 搜索文章
      * @param param
@@ -65,4 +79,5 @@ public interface ContentService {
      * @return
      */
     PageInfo<ContentDomain> searchArticle(String param, int pageNun, int pageSize);
+
 }

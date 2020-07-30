@@ -47,4 +47,15 @@ public interface CommentService {
      * @return
      */
     PageInfo<CommentDomain> getCommentsByCond(CommentCond commentCond, int pageNum, int pageSize);
+
+    /**
+     * 获取所有评论
+     */
+    List<CommentDomain> getAllComments();
+
+    /**
+     * 获取所有未通过的评论
+     * 可以在获取所有评论的基础上设置条件
+     */
+    List<CommentDomain> getAllCommentsPassed();
 }

@@ -19,12 +19,12 @@
         where cid = #{cid} and ctypeid = #{ctypeid}
     </delete>
 
-    <select id="getCid">
+    <select id="getCid" resultType="Integer">
         select cid from sb_blog_200725.t_contents_type_relationships
         where ctypeid = #{ctypeid}
     </select>
     
-    <select id="getCtypeid" resultType="java.util.List">
+    <select id="getCtypeid" resultType="Integer">
         select ctypeid from sb_blog_200725.t_contents_type_relationships
         where cid = #{cid}
     </select>
@@ -39,6 +39,5 @@
         delete from sb_blog_200725.t_contents_type_relationships
         where ctypeid = #{ctypeid}
     </delete>
-
 
 </mapper>

@@ -29,7 +29,7 @@
                     <h2 class="panel-heading"><th:block th:text="${article.title}"></th:block></a></h2>
                     <div class="panel panel-heading">
                     <p><th:block th:text="${article.created}"></th:block>
-                        [作者:<th:block th:text="${article.authorId}"></th:block>]/
+                        [作者:<th:block th:text="${article.authorName}"></th:block>]/
                         [点击:<th:block th:text="${article.clicks}"></th:block>]/
                         [评论:<th:block th:text="${article.commentsNum}"></th:block>]
                     </p><br/><br/>
@@ -65,6 +65,7 @@
                         <h4>发表评论</h4>
                         <div class="form-inline">
                             <input type="text" name="cid" hidden="hidden" th:value="${article.cid}">
+                            <!--时间-->
                             <input type="text" name="authorName" class="form-group" placeholder="用户名">
                             <input type="email" name="email" class="form-group" placeholder="邮箱">
                         </div>

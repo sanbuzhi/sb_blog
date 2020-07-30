@@ -59,4 +59,9 @@
         set numbers=numbers - 1
         where ctagid = #{ctagid, jdbcType=INTEGER}
     </update>
+
+    <!--获取所有的标签-->
+    <select id="getAllTags" resultType="com.sanbuzhi.pojo.ContentTagDomain">
+        select * from sb_blog_200725.t_contents_tag
+    </select>
 </mapper>

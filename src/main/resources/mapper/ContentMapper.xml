@@ -96,8 +96,8 @@
             <if test="content!=null">
                 content,
             </if>
-            <if test="authorId!=null">
-                authorId,
+            <if test="authorName!=null">
+                authorName,
             </if>
             <if test="status!=null">
                 status,
@@ -130,8 +130,8 @@
             <if test="content!=null">
                 #{content, jdbcType=LONGVARCHAR},
             </if>
-            <if test="authorId!=null">
-                #{authorId, jdbcType=INTEGER},
+            <if test="authorName!=null">
+                #{authorName, jdbcType=INTEGER},
             </if>
             <if test="status!=null">
                 #{status, jdbcType=VARCHAR},

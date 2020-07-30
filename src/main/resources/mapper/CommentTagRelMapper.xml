@@ -19,12 +19,12 @@
         where cid = #{cid} and ctagid = #{ctagid}
     </delete>
 
-    <select id="getCid">
+    <select id="getCid" resultType="Integer">
         select cid from sb_blog_200725.t_contents_tag_relationships
         where ctagid = #{ctagid}
     </select>
 
-    <select id="getCtagid" resultType="java.util.List">
+    <select id="getCtagid" resultType="Integer">
         select ctagid from sb_blog_200725.t_contents_tag_relationships
         where cid = #{cid}
     </select>

@@ -24,7 +24,7 @@ public class ContentDomain {
     /*内容*/
     private String content;
     /*文章作者ID*/
-    private Integer authorId;
+    private String authorName;
     /*状态*/
     private String status;
 

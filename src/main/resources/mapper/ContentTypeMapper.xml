@@ -59,4 +59,8 @@
         set numbers=numbers - 1
         where ctypeid = #{ctypeId, jdbcType=INTEGER}
     </update>
+
+    <select id="getAllCType" resultType="com.sanbuzhi.pojo.ContentTypeDomain">
+        select * from sb_blog_200725.t_contents_type
+    </select>
 </mapper>

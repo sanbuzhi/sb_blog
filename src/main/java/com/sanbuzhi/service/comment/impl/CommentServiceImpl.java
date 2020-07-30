@@ -53,4 +53,17 @@ public class CommentServiceImpl implements CommentService {
     public PageInfo<CommentDomain> getCommentsByCond(CommentCond commentCond, int pageNum, int pageSize) {
         return null;
     }
+
+    @Override
+    public List<CommentDomain> getAllComments() {
+        List<CommentDomain> allComments = commentDao.getAllComment();
+        return allComments;
+    }
+
+    @Override
+    public List<CommentDomain> getAllCommentsPassed() {
+        List<CommentDomain> allComments = this.getAllComments();
+        //状态为通过则添加，返回
+        return allComments;
+    }
 }

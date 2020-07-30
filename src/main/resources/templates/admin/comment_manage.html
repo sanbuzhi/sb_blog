@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Simple  - Editor.md examples</title>
+    <link th:rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="/css/editormd.css" />
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+    <!--引用-->
+    <div th:replace="~{admin/commontemplate :: Argon_head_css}"></div>
+</head>
+<body>
+<!--引用-->
+<div th:replace="~{admin/commontemplate :: Sidenav}"></div>
+
+<!--内容区域-->
+<div class="main-content" id="panel">
+    <div class="container-fluid mt">
+        <div id="layout" class="table align-items-center table-white table-flush">
+            <header>
+                <h1>评论管理</h1>
+            </header>
+            <div class="col-md-12">
+                <table class="table table-hover table-bordered">
+                    <thead style="background-color: #1fd0f0">
+                    <tr>
+                        <th>评论文章</th>
+                        <th>评论内容</th>
+                        <th>评论人</th>
+                        <th>评论时间</th>
+                        <th>评论人邮箱</th>
+                        <th>评论状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="comment : ${allComments}">
+                            <td th:text="${comment.cid}"></td>
+                            <td th:text="${comment.content}"></td>
+                            <td th:text="${comment.authorName}"></td>
+                            <td th:text="${comment.created}"></td>
+                            <td th:text="${comment.email}"></td>
+                            <td th:text="${comment.status}"></td>
+                            <td>
+                                <a href="#">删除</a> |
+                                <a href="#">修改</a>
+                            </td>
+                        </tr>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/editormd.min.js"></script>
+
+<!--引用-->
+<div th:replace="~{admin/commontemplate :: Argon_body_js}"></div>
+
+<script type="text/javascript">
+    var testEditor;
+    $(function() {
+        testEditor = editormd("test-editormd", {
+            width   : "100%",
+            height  : 540,
+            syncScrolling : "single",
+            path    : "../lib/",
+            /*不能带static，即../static/lib/否则报错*/
+            /**下述为新增，上面一行记得加逗号结束*/
+            /*指定需要显示的功能按钮*/
+            toolbarIcons : function() {
+                return ["undo", "redo", "|","bold", "italic","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","table","datetime","hr",  "||",  "watch", "fullscreen", "preview", "releaseIcon", "index"]
+            },
+
+            /*自定义功能按钮，下面我自定义了2个，一个是发布，一个是返回首页*/
+            toolbarIconTexts : {
+                releaseIcon : "<span bgcolor=\"gray\">发布</span>",
+                index : "<span bgcolor=\"red\">返回主页</span>",
+            },
+
+            /*给自定义按钮指定回调函数*/
+            toolbarHandlers:{
+                releaseIcon : function(cm, icon, cursor, selection) {
+                    contentCommit();//提交表单代码在下面
+                },
+                index : function(){
+                    window.location.href = '/index';
+                },
+            }
+        });
+
+    });
+    /*提交表单的js*/
+    function contentCommit(){
+        mdEditorForm.method = "post";
+        mdEditorForm.action = "submitPage";//提交至服务器的路径
+        mdEditorForm.submit();
+    }
+</script>
+
+</body>
+</html>
