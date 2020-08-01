@@ -2,88 +2,102 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Document</title>
-    <link th:rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.css}">
-    <link th:rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap-theme.css}">
-
-    <script th:src="@{/js/jquery-3.5.1.js}"></script>
-    <script th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <meta charset="utf-8">
+    <title>test页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Example of Fluid Layout with Bootstrap version 2.0 from w3cschool.cc">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link th:href="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/css/example-fluid-layout.css}" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script th:src="@{//html5shim.googlecode.com/svn/trunk/html5.js}"></script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" th:href="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/examples/images/favicon.ico}">
+    <link rel="apple-touch-icon" th:href="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/examples/images/apple-touch-icon.png}">
+    <link rel="apple-touch-icon" sizes="72x72" th:href="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/examples/images/apple-touch-icon-72x72.png}">
+    <link rel="apple-touch-icon" sizes="114x114" th:href="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/examples/images/apple-touch-icon-114x114.png}">
 </head>
+
 
 <body>
 
+<!--导航栏-->
+<div th:replace="site/common::commonNav"></div>
 
-
-<div class="container">
-    <!--导航栏-->
-    <div th:include="site/common::commonNav"></div>
-
-    <!--内容展示-->
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="span8 col-lg-offset-2 panel panel-default">
-                    <h2 class="panel-heading"><th:block th:text="${article.title}"></th:block></a></h2>
-                    <div class="panel panel-heading">
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span3">
+            <pre>
+                预留
+            </pre>
+        </div>
+        <div class="span9">
+            <!--内容展示-->
+            <div class="leaderboard">
+                <h2 class="panel-heading" style="color: #1d75b3;"><th:block th:text="${article.title}"></th:block></a></h2>
+                <div class="panel panel-heading">
                     <p><th:block th:text="${article.created}"></th:block>
-                        [作者:<th:block th:text="${article.authorName}"></th:block>]/
-                        [点击:<th:block th:text="${article.clicks}"></th:block>]/
+                        [作者:<th:block th:text="${article.authorName}"></th:block>]|
+                        [点击:<th:block th:text="${article.clicks}"></th:block>]|
                         [评论:<th:block th:text="${article.commentsNum}"></th:block>]
                     </p><br/><br/>
                     <p><th:block th:text="${article.content}"></th:block></p>
+                </div>
+            </div>
+            <!--评论列表-->
+            <div class="leaderboard">
+                <h4 class="panel-heading" style="color: #1d75b3;">评论列表</h4>
+                <th:block th:each="comment : ${comments}">
+                    <p><th:block th:text="${comment.created}"></th:block>
+                        [评论者:<th:block th:text="${comment.authorName}"></th:block>]/
+                        [邮件:<th:block th:text="${comment.email}"></th:block>]/
+                    </p>
+                    <p th:text="${comment.content}"></p><br/>
+                </th:block>
+                <hr>
+            </div>
+            <!--评论-->
+            <div class="leaderboard">
+                <form class="panel-heading" method="post" th:action="@{/addcomment}">
+                    <h4 style="color: #1d75b3;">发表评论</h4>
+                    <div class="form-inline">
+                        <input type="hidden" name="cid" th:value="${article.cid}">
+                        <!--时间-->
+                        <input type="text" name="authorName" class="form-group" placeholder="用户名">
+                        <input type="email" name="email" class="form-group" placeholder="邮箱">
                     </div>
-                </div>
+                    <input type="text" name="content" required maxlength="100"><br/>
+                    <input type="submit">
+                </form>
             </div>
-        </div>
-    </div>
-    <!--评论列表-->
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="span8 col-lg-offset-2 panel panel-default">
-                    <h4 class="panel-heading">评论列表</h4>
-                    <th:block th:each="comment : ${comments}">
-                        <p><th:block th:text="${comment.created}"></th:block>
-                            [评论者:<th:block th:text="${comment.authorName}"></th:block>]/
-                            [邮件:<th:block th:text="${comment.email}"></th:block>]/
-                        </p>
-                        <p><th:block th:text="${comment.content}"></th:block></p><br/>
-                    </th:block>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--评论-->
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="span8 col-lg-offset-2 panel panel-default">
-                    <form class="panel-heading" method="post" th:action="@{/addcomment}">
-                        <h4>发表评论</h4>
-                        <div class="form-inline">
-                            <input type="text" name="cid" hidden="hidden" th:value="${article.cid}">
-                            <!--时间-->
-                            <input type="text" name="authorName" class="form-group" placeholder="用户名">
-                            <input type="email" name="email" class="form-group" placeholder="邮箱">
-                        </div>
-                        <input type="text" name="content" required maxlength="100"><br/>
-                        <input type="submit">
-                    </form>
-                </div>
-                <br/><br/><br/><br/>
-            </div>
-        </div>
-    </div>
 
+            <!--分页栏-->
+        </div>
 
-    <!--分页栏-->
-    <div th:include="site/common::preBackPageBar"></div>
-
+    </div>
 </div>
 
+<div th:replace="site/common::preBackPageBar"></div>
+
+
+<!-- Le javascript==================================================- ->
+<!-- Placed at the end of the document so the pages load faster -->
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/jquery.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-transition.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-alert.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-modal.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-dropdown.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-scrollspy.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-tab.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-tooltip.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-popover.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-button.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-collapse.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-carousel.js}"></script>
+<script th:src="@{/twitter-bootstrap/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-typeahead.js}"></script>
 </body>
 
 

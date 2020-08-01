@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bootstrap dropdown with navbar example</title>
+    <link href="../bootstrap/twitter-bootstrap-v2/docs/assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+    <ul class="nav nav-pills">
+    <li class="dropdown all-camera-dropdown">
+           <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            All Cameras
+               <b class="caret"></b>
+           </a>
+    <ul class="dropdown-menu">
+            <li data-filter-camera-type="all"><a data-toggle="tab" href="#">All Cameras</a></li>
+            <li data-filter-camera-type="Alpha"><a data-toggle="tab" href="#">Alpha</a></li>
+            <li data-filter-camera-type="Zed"><a data-toggle="tab" href="#">Zed</a></li>
+            <li data-filter-camera-type="Bravo"><a data-toggle="tab" href="#">Bravo</a></li>
+
+     </ul>
+</li></ul>
+    <div class="container-fluid">
+     <h1>Dropdown Example</h1>
+    </div>
+	<script type="text/javascript" src="../bootstrap/twitter-bootstrap-v2/docs/assets/js/jquery.js"></script>
+	<script type="text/javascript" src="../bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-dropdown.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+   </script>
+</body>
+</html>

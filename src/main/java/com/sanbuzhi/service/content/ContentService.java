@@ -3,9 +3,11 @@ package com.sanbuzhi.service.content;
 import com.github.pagehelper.PageInfo;
 import com.sanbuzhi.pojo.ContentDomain;
 import com.sanbuzhi.pojo_short.ArticleTypeTag;
+import com.sanbuzhi.pojo_short.FileDomain;
 import com.sanbuzhi.pojo_short.cond.ContentCond;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 文章业务层
@@ -58,7 +60,7 @@ public interface ContentService {
      * @param pageSize
      * @return
      */
-    PageInfo<ContentDomain> getRecentlyArticle(int pageNum, int pageSize);
+    Map getRecentlyArticle(Integer pageNum, Integer pageSize);
 
 
     /**
@@ -79,5 +81,27 @@ public interface ContentService {
      * @return
      */
     PageInfo<ContentDomain> searchArticle(String param, int pageNun, int pageSize);
+
+    /**
+     * 修改文章
+     * 返回给修改页面内容{文章实体，对应所有types，和tags}
+     * 同时删除此文章对应的type和tag还有关联等信息
+     */
+    Map ContentUpdateEdit(Integer cid);
+
+    /**
+     * 更新文章
+     */
+    void updateArticle(ContentDomain contentDomain,String type,String tag);
+
+    /**
+     * 获取文章数量
+     */
+    Long getArticleCount();
+
+    /**
+     * 返回专题页需要的内容{文章实体列表+文章类型实体列表+文章类型关系实体列表}
+     */
+    List<FileDomain> whatFilePageNeed();
 
 }

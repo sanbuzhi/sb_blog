@@ -35,7 +35,7 @@
         where cid = #{cid}
     </delete>
     <!--根据类型id删除关联项-->
-    <delete id="deleteContentTagRelByCtypeid">
+    <delete id="deleteContentTagRelByCtagid">
         delete from sb_blog_200725.t_contents_tag_relationships
         where ctagid = #{ctagid}
     </delete>

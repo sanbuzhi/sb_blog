@@ -23,7 +23,8 @@ public class ContentTypeRelServiceImpl implements ContentTypeRelService {
 
     @Override
     public List<Integer> getCid(Integer ctypeid) {
-        return null;
+        List<Integer> cids = contentTypeRelDao.getCid(ctypeid);
+        return cids;
     }
 
     @Override
@@ -39,5 +40,6 @@ public class ContentTypeRelServiceImpl implements ContentTypeRelService {
 
     @Override
     public void deleteContentTypeRelByCtypeid(Integer ctypeid){
+        contentTypeRelDao.deleteContentTypeRelByCtypeid(ctypeid);
     }
 }

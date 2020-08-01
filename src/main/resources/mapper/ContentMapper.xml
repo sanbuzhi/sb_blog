@@ -171,10 +171,12 @@
             <if test="slug != null">
                 slug = #{slug, jdbcType=VARCHAR},
             </if>
+            <if test="modified != null">
+                modified = #{modified, jdbcType=VARCHAR},
+            </if>
             <if test="content != null">
                 content = #{content, jdbcType=LONGVARCHAR},
             </if>
-                modified = UNIX_TIMESTAMP(NOW()),
             <if test="status != null">
                 status = #{status, jdbcType=VARCHAR},
             </if>

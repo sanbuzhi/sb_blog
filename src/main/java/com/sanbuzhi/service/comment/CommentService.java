@@ -24,7 +24,7 @@ public interface CommentService {
     /**
      * 更新评论的状态
      */
-    void updateCommentStatus(Integer coid, String status);
+    void changeCommentStatus(Integer coid);
 
 
     /**
@@ -58,4 +58,9 @@ public interface CommentService {
      * 可以在获取所有评论的基础上设置条件
      */
     List<CommentDomain> getAllCommentsPassed();
+
+    /**
+     * 获取文章数量
+     */
+    Long getCommentsCount();
 }

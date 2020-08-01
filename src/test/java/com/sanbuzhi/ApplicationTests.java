@@ -1,6 +1,8 @@
 package com.sanbuzhi;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.sanbuzhi.constant.ErrorConstant;
 import com.sanbuzhi.dao.CommentDao;
 import com.sanbuzhi.dao.ContentDao;
 import com.sanbuzhi.dao.ContentTypeDao;
@@ -10,6 +12,7 @@ import com.sanbuzhi.pojo.ContentDomain;
 import com.sanbuzhi.pojo.ContentTypeDomain;
 import com.sanbuzhi.pojo.UserDomain;
 import com.sanbuzhi.pojo_short.ArticleTypeTag;
+import com.sanbuzhi.pojo_short.FileDomain;
 import com.sanbuzhi.service.comment.CommentService;
 import com.sanbuzhi.service.content.ContentService;
 import com.sanbuzhi.service.content.impl.ContentServiceImpl;
@@ -33,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 @RunWith(SpringRunner.class)
@@ -93,14 +97,15 @@ public class ApplicationTests {
     public void testRecentContent(){
         SpringUtils utils = new SpringUtils();
         ContentServiceImpl contentService = utils.getBean(ContentServiceImpl.class);
-        PageInfo<ContentDomain> recentlyArticle = contentService.getRecentlyArticle(2, 5);
-        int nextPage = recentlyArticle.getNextPage();
+        Map map = contentService.getRecentlyArticle(2, 5);
+        PageInfo pageInfo = (PageInfo) map.get("pageInfo");
+        int nextPage = pageInfo.getNextPage();
         System.out.println("nextpage->"+nextPage);
-        System.out.println(recentlyArticle.getPages());
+        System.out.println(pageInfo.getPages());
 
-        System.out.println(recentlyArticle);
+        System.out.println(pageInfo);
         System.out.println("-----");
-        List<ContentDomain> list = recentlyArticle.getList();
+        List<ContentDomain> list = pageInfo.getList();
         for(ContentDomain contentDomain:list){
             System.out.println(contentDomain);
         }
@@ -140,6 +145,14 @@ public class ApplicationTests {
         System.out.println("list+" +list);
     }
 
+    //删除评论
+    @Test
+    public void test23(){
+        SpringUtils utils = new SpringUtils();
+        CommentService bean = utils.getBean(CommentService.class);
+        bean.deleteComment(1);
+    }
+
     /*制造文章*/
     @Test
     public void test31(){
@@ -177,6 +190,17 @@ public class ApplicationTests {
         SpringUtils springUtils = new SpringUtils();
         ContentTypeRelService bean = springUtils.getBean(ContentTypeRelService.class);
         bean.deleteContentTypeRelByCid(156);
+    }
+
+    //测试WhatfilepageNeed
+    @Test
+    public void test51(){
+        SpringUtils springUtils = new SpringUtils();
+        ContentService bean = springUtils.getBean(ContentService.class);
+        List<FileDomain> fileDomains = bean.whatFilePageNeed();
+        for(FileDomain fileDomain : fileDomains){
+            System.out.println(fileDomain);
+        }
     }
 
 }

@@ -42,8 +42,8 @@
                             <td th:text="${comment.email}"></td>
                             <td th:text="${comment.status}"></td>
                             <td>
-                                <a href="#">删除</a> |
-                                <a href="#">修改</a>
+                                <a th:href="@{/admin/comm_del/}+${comment.coid}">删除</a> |
+                                <a th:href="@{/admin/comm_update/}+${comment.coid}">更改状态</a>
                             </td>
                         </tr>
                     </tr>

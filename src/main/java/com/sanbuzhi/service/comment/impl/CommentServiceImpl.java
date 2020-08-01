@@ -30,12 +30,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Integer coid) {
-
+        commentDao.deleteComment(coid);
     }
 
     @Override
-    public void updateCommentStatus(Integer coid, String status) {
-
+    public void changeCommentStatus(Integer coid) {
+        String status = commentDao.getCommentByCoid(coid).getStatus();
+        if(status.equals("待审核")){
+            status = "通过";
+        }else{
+            status = "待审核";
+        }
+        System.out.println("status++"+status);
+        commentDao.updateCommentStatus(coid, status);
     }
 
     @Override
@@ -65,5 +72,11 @@ public class CommentServiceImpl implements CommentService {
         List<CommentDomain> allComments = this.getAllComments();
         //状态为通过则添加，返回
         return allComments;
+    }
+
+    @Override
+    public Long getCommentsCount() {
+        Long commentsCount = commentDao.getCommentsCount();
+        return commentsCount;
     }
 }

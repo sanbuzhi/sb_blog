@@ -120,4 +120,7 @@
         select * from sb_blog_200725.t_comments order by created desc
     </select>
 
+    <select id="getCommentByCoid" resultType="com.sanbuzhi.pojo.CommentDomain">
+        select * from sb_blog_200725.t_comments where coid = #{coid, jdbcType=INTEGER}
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.sanbuzhi.controller.admin;
 
+import com.sanbuzhi.dao.ContentDao;
 import com.sanbuzhi.pojo.CommentDomain;
 import com.sanbuzhi.pojo.ContentDomain;
 import com.sanbuzhi.pojo.ContentTagDomain;
@@ -33,9 +34,15 @@ public class IndexController {
     @Autowired
     private ContentTagService contentTagService;
 
+
     //1.网站统计
     @RequestMapping({"","/index"})
-    public String index(){
+    public String index(Model model){
+        Long articleCount = contentService.getArticleCount();
+        Long commentsCount = commentService.getCommentsCount();
+        model.addAttribute("articleCount", articleCount);
+        model.addAttribute("commentsCount", commentsCount);
+
         return "admin/index";
     }
 
@@ -63,7 +70,6 @@ public class IndexController {
     @RequestMapping("/article_manage")
     public String artmanage(Model model){
         List<ArticleTypeTag> allArticleTypeTags = contentService.getAllArticleTypeTag();
-        System.out.println("allArticleTypeTags"+allArticleTypeTags);
         model.addAttribute("allArticleTypeTags", allArticleTypeTags);
         //待补充
         return "admin/article_manage";

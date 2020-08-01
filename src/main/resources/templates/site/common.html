@@ -5,69 +5,93 @@
 </head>
 <body>
 <div class="container">
-    <!--公共导航栏-->
-    <div th:fragment="commonNav" class="row">
-
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-            　<div class="navbar-header">
-            　    <a th:href="@{/}" class="navbar-brand">sanBuzhi</a>
-            　</div>
-            <ul class="nav navbar-nav">
-                <li class="active"><a th:href="@{/}">首页</a></li>
-                <li><a th:href="@{/}">专题</a></li>
-                <li><a th:href="@{/}">友链</a></li>
-                <li><a th:href="@{/}">归档</a></li>
-                <li class="dropdown">
-                    <a href="##" data-toggle="dropdown" class="dropdown-toggle">关于<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a th:href="@{/}">个人</a></li>
-                        <li class="disabled"><a th:href="@{/}">发展</a></li>
+    <!--导航栏-->
+    <div th:fragment="commonNav" class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#">
+                    <img src="/assets/img/sanbuzhi.png" width="111" height="30" alt="blog logo" /></a>
+                <div class="nav-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/special}">专题</a></li>
+                        <li><a th:href="@{#}">友链</a></li>
+                        <li><a th:href="@{/file}">归档</a></li>
+                        <li class="dropdown">
+                            <a href="##" data-toggle="dropdown" class="dropdown-toggle">关于<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a th:href="@{/}">个人</a></li>
+                                <li class="disabled"><a th:href="@{/}">发展</a></li>
+                            </ul>
+                        </li>
                     </ul>
-                </li>
-            </ul>
-            <form action="##" class="navbar-form navbar-left" rol="search">
-                <div class="form-group">
-                    <input th:type="text" class="form-control" placeholder="请输入关键词" />
+                    <p class="navbar-text pull-right">Logged in as
+                        <a href="#">username</a></p>
                 </div>
-                <button th:type="submit" class="btn btn-default">搜索</button>
-            </form>
+                <!--/.nav-collapse --></div>
         </div>
-        <h2>看不见我</h2>
     </div>
 
     <!--公共分页栏-->
-    <div th:fragment="commonPagebar" class="row">
-        <nav style="text-align: center" class="navbar-fixed-bottom bg-info">
-            <div class="form-inline row">
-                <div class="form-group ">
-                    «
-                </div>
-                <div th:each="pageindex:${#numbers.sequence(1,articles.pages)}" class="form-group">
-                    <a class="btn btn-default" role="button" th:href="@{'/blog/page/'+${pageindex}}" th:text="${pageindex}"></a>
-                    <div th:if="${articles.pageNum} eq ${pageindex}">
-                        <p class="caret"></p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    »
-                </div>
+    <div class="diy-bottom" th:fragment="pagebar">
+        <!--底部固定只能自定义css-->
+        <style>
+            .diy-bottom{position:fixed;left:0px;bottom: 0px;width:100%;height:75px;background-color:lightgray;z-index:999;}
+        </style>
+        <div style="margin: 0px auto; display: table;">
+            <div class="container-fluid" style="text-align: center">
+                <strong>当前第 [[${pageInfo.pageNum}]]页,共 [[${pageInfo.pages}]] 页。一共 [[${pageInfo.total}]] 条记录</strong>
+                <ul class="pagination">
+                    <!--首页-->
+                    <li>
+                        <a th:href="@{/blog/page/1}">首页</a>
+                    </li>
+                    <li th:if="${pageInfo.hasPreviousPage}">
+                        <a th:href="'/blog/page/'+${pageInfo.prePage}">
+                            &laquo;
+                        </a>
+                    </li>
+                    <!--遍历条数-->
+                    <li th:each="nav:${pageInfo.navigatepageNums}">
+                        <a th:href="'/blog/page/'+${nav}" th:text="${nav}" th:if="${nav != pageInfo.pageNum}"></a>
+                    </li>
+                    <li class="next" th:if="${pageInfo.hasNextPage}">
+                        <a th:href="'/blog/page/'+${pageInfo.nextPage}">
+                            &raquo;
+                        </a>
+                    </li>
+                    <!--尾页-->
+                    <li>
+                        <a th:href="'/blog/page/'+${pageInfo.pages}">尾页</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </div>
     </div>
 
     <!--前后页-->
-    <div th:fragment="preBackPageBar" class="row">
-        <nav style="text-align: center" class="navbar-fixed-bottom">
-            <ul class="pagination form-inline">
-                <div th:if="${articlepre ne null}" class="form-group">
-                    <a th:href="@{'/blog/content/'+ ${articlepre.cid}}" th:text="${articlepre.title}"></a>
-                </div>
-                <上一篇|下一篇>
-                <div th:if="${articleback ne null}" class="form-group">
-                    <a th:href="@{'/blog/content/'+ ${articleback.cid}}" th:text="${articleback.title}"></a>
-                </div>
-            </ul>
-        </nav>
+    <div class="diy-bottom" th:fragment="preBackPageBar">
+        <!--底部固定只能自定义css-->
+        <style>
+            .diy-bottom{position:fixed;left:0px;bottom: 0px;width:100%;height:75px;background-color: lightgray;z-index:999;}
+        </style>
+        <div style="margin: 0px auto; display: table;">
+            <div class="container-fluid" style="text-align: center">
+                <ul class="pager">
+                    <li class="previous disabled">
+                        <a th:if="${articlepre ne null}" th:href="@{'/blog/content/'+ ${articlepre.cid}}" th:text="'←'+${articlepre.title}"></a>
+                    </li>
+                    <li class="next">
+                        <a th:if="${articleback ne null}" th:href="@{'/blog/content/'+ ${articleback.cid}}" th:text="${articleback.title}+'→'"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
 </div>

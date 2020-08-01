@@ -7,23 +7,25 @@ import com.sanbuzhi.constant.WebConst;
 import com.sanbuzhi.dao.*;
 import com.sanbuzhi.exception.BusinessException;
 import com.sanbuzhi.pojo.*;
+import com.sanbuzhi.pojo_short.ArticleTTDomain;
 import com.sanbuzhi.pojo_short.ArticleTypeTag;
+import com.sanbuzhi.pojo_short.FileDomain;
 import com.sanbuzhi.pojo_short.cond.ContentCond;
 import com.sanbuzhi.service.content.ContentService;
+import com.sanbuzhi.service.contenttag.ContentTagService;
+import com.sanbuzhi.service.contenttagrel.ContentTagRelService;
 import com.sanbuzhi.service.contenttype.ContentTypeService;
 import com.sanbuzhi.service.contenttyperel.ContentTypeRelService;
-import com.sun.xml.internal.ws.encoding.ContentType;
-import com.sun.xml.internal.ws.encoding.ContentTypeImpl;
-import net.bytebuddy.implementation.bind.ArgumentTypeResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ContentServiceImpl implements ContentService {
@@ -34,6 +36,13 @@ public class ContentServiceImpl implements ContentService {
     @Autowired
     private ContentTypeRelService contentTypeRelService;
 
+    @Autowired
+    private ContentTagService contentTagService;
+
+    @Autowired
+    private ContentTagRelService contentTagRelService;
+
+    //后续将dao层删掉
     @Autowired
     private ContentDao contentDao;
 
@@ -73,6 +82,9 @@ public class ContentServiceImpl implements ContentService {
         if (contentDomain.getContent().length() > WebConst.MAX_TEXT_COUNT)
             throw BusinessException.withErrorCode(ErrorConstant.Article.CONTENT_IS_TOO_LONG);
         //添加文章
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String systime= sdf.format(new Date()).split(" ")[0];
+        contentDomain.setCreated(systime);
         contentDao.addArticle(contentDomain);
 
         //分类字段不为空
@@ -204,13 +216,27 @@ public class ContentServiceImpl implements ContentService {
      */
     @Override
     @Cacheable(value = "atricleCaches", key = "'recentlyArticle_' + #p0")
-    public PageInfo<ContentDomain> getRecentlyArticle(int pageNum, int pageSize) {
+    public Map getRecentlyArticle(Integer pageNum, Integer pageSize) {
+        Map<Object, Object> hashMap = new HashMap<>();
+        //为了程序的严谨性，判断非空：
+        //设置默认当前页
+        if(pageNum==null || pageNum<=0){
+            pageNum = 1;
+        }
+        //设置默认每页显示的数据数
+        if(pageSize == null){
+            pageSize = 12;
+        }
         PageHelper.startPage(pageNum, pageSize);
-        List<ContentDomain> recentlyArticle = contentDao.getRecentlyArticle();
-        //时间戳格式化
-        PageInfo<ContentDomain> pageInfo = new PageInfo<>(recentlyArticle);
-        System.out.println("PageInfo:"+pageInfo);
-        return pageInfo;
+        try{
+            List<ContentDomain> recentlyArticles = contentDao.getRecentlyArticle();
+            PageInfo<ContentDomain> pageInfo = new PageInfo<>(recentlyArticles,pageSize);
+            hashMap.put("pageInfo", pageInfo);
+            hashMap.put("recentlyArticles", recentlyArticles);
+        }finally {
+            PageHelper.clearPage();
+        }
+        return hashMap;
     }
 
     @Override
@@ -261,7 +287,157 @@ public class ContentServiceImpl implements ContentService {
     }
 
     /**
-     * 文章阅读量+1
+     * 通过cid返回一个map{文章实体类+对应类型+对应标签}
+     * 更改文章时需要
+     * 还需要清空文章的类型标签等信息
      */
+    @Override
+    public Map ContentUpdateEdit(Integer cid) {
+        Map<Object, Object> hashMap = new HashMap<>();
 
+        ContentDomain contentDomain = this.getArticleById(cid);
+        //获得cid对应的所有type和tag
+        List<Integer> ctypeids = contentTypeRelService.getCtypeid(cid);
+        String types = "";
+        for(Integer ct: ctypeids){
+            ContentTypeDomain cTypeDomain = contentTypeService.getCTypeDomain(ct);
+            types = types + cTypeDomain.getName() + ";";
+            //删除此标签的关联
+            contentTypeRelService.deleteContentTypeRelByCtypeid(ct);
+            //标签数量-1
+            contentTypeService.subNumbers(ct);
+        }
+        List<Integer> cTagids = contentTagRelService.getCTagidByCid(cid);
+        String tags = "";
+        for(Integer ctag: cTagids){
+            ContentTagDomain contentTagDomain = contentTagService.getCTagDomainByCtagid(ctag);
+            tags = tags+contentTagDomain.getName() + ";";
+            //删除此标签的关联
+            contentTagRelService.deleteContentTagRelByCtagid(ctag);
+            //标签数量-1
+            contentTagService.subNumbers(ctag);
+        }
+        hashMap.put("contentDomain", contentDomain);
+        hashMap.put("types", types);
+        hashMap.put("tags", tags);
+        return hashMap;
+    }
+
+    @Override
+    public void updateArticle(ContentDomain contentDomain, String type, String tag) {
+        if (null == contentDomain)
+            throw BusinessException.withErrorCode(ErrorConstant.Common.PARAM_IS_EMPTY);
+        if (StringUtils.isBlank(contentDomain.getTitle()))
+            throw BusinessException.withErrorCode(ErrorConstant.Article.TITLE_CAN_NOT_EMPTY);
+        if (contentDomain.getTitle().length() > WebConst.MAX_TITLE_COUNT)
+            throw BusinessException.withErrorCode(ErrorConstant.Article.TITLE_IS_TOO_LONG);
+        if (StringUtils.isBlank(contentDomain.getContent()))
+            throw BusinessException.withErrorCode(ErrorConstant.Article.CONTENT_CAN_NOT_EMPTY);
+        if (contentDomain.getContent().length() > WebConst.MAX_TEXT_COUNT)
+            throw BusinessException.withErrorCode(ErrorConstant.Article.CONTENT_IS_TOO_LONG);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String systime= sdf.format(new Date()).split(" ")[0];
+        contentDomain.setModified(systime);
+        System.out.println("contentDomain+++" + contentDomain);
+        contentDao.updateArticleById(contentDomain);
+        //分类字段不为空
+        if(null != type){
+            String[] splitedType = type.split(";");
+            for(String ctypename : splitedType){
+                //按名字从文章分类里找到此分类
+                ContentTypeDomain contentTypeDomain = contentTypeDao.searchTypeByName(ctypename);
+                if(null != contentTypeDomain){
+                    //说明存在此分类，先给此类型的文章数量+1
+                    contentTypeDao.addNumber(contentTypeDomain.getCtypeid());
+                    // 再往关联表添加关联
+                    ContentTypeRelDomain contentTypeRelDomain = new ContentTypeRelDomain();
+                    contentTypeRelDomain.setCid(contentDomain.getCid());
+                    contentTypeRelDomain.setCtypeid(contentTypeDomain.getCtypeid());
+                    contentTypeRelDao.addContentTypeRel(contentTypeRelDomain);
+                }else {
+                    //说明文章分类里没有此分类，则先创建此分类
+                    ContentTypeDomain contentTypeDomain1 = new ContentTypeDomain();
+                    contentTypeDomain1.setName(ctypename);//这里可以不用设置ctypeid
+                    contentTypeDomain1.setNumbers(1);
+                    contentTypeDao.addType(contentTypeDomain1);
+                    // 再往关联表添加关联
+                    ContentTypeRelDomain contentTypeRelDomain = new ContentTypeRelDomain();
+                    contentTypeRelDomain.setCid(contentDomain.getCid());
+                    ContentTypeDomain tmpCTD = contentTypeDao.searchTypeByName(ctypename);
+                    contentTypeRelDomain.setCtypeid(tmpCTD.getCtypeid());
+                    contentTypeRelDao.addContentTypeRel(contentTypeRelDomain);
+                }
+            }
+        }
+        //标签字段不为空
+        if(null != tag) {
+            String[] splitedTag = tag.split(";");
+            for (String ctagname : splitedTag) {
+                //按名字从文章标签里找到此标签
+                ContentTagDomain contentTagDomain = contentTagDao.searchTagByName(ctagname);
+                if (null != contentTagDomain) {
+                    //说明存在此分类，先给此类型的文章数量+1
+                    contentTagDao.addNumber(contentTagDomain.getCtagid());
+                    // 再往关联表添加关联
+                    ContentTagRelDomain contentTagRelDomain = new ContentTagRelDomain();
+                    contentTagRelDomain.setCid(contentDomain.getCid());
+                    contentTagRelDomain.setCtagid(contentTagDomain.getCtagid());
+                    contentTagRelDao.addContentTagRel(contentTagRelDomain);
+                } else {
+                    //说明文章分类里没有此分类，则先创建此分类
+                    ContentTagDomain contentTagDomain1 = new ContentTagDomain();
+                    contentTagDomain1.setName(ctagname);
+                    contentTagDomain1.setNumbers(1);
+                    contentTagDao.addTag(contentTagDomain1);
+                    // 再往关联表添加关联
+                    ContentTagRelDomain contentTagRelDomain = new ContentTagRelDomain();
+                    contentTagRelDomain.setCid(contentDomain.getCid());
+                    ContentTagDomain tmpCTD = contentTagDao.searchTagByName(ctagname);
+                    contentTagRelDomain.setCtagid(tmpCTD.getCtagid());
+                    contentTagRelDao.addContentTagRel(contentTagRelDomain);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Long getArticleCount() {
+        Long articleCount = contentDao.getArticleCount();
+        return articleCount;
+    }
+
+    @Override
+    public List<FileDomain> whatFilePageNeed() {
+        ArrayList<FileDomain> fileDomains = new ArrayList<>();
+        List<ContentDomain> articles = this.getAllArticle();
+        Set<String> sets = new HashSet<>();//用来存放"年月"的可能
+        for(ContentDomain contentDomain : articles){
+            String yearMonth = contentDomain.getCreated().split("-")[0] + "年" + contentDomain.getCreated().split("-")[1] + "月";
+            sets.add(yearMonth);
+        }
+        for(String ss : sets){
+            FileDomain fileDomain = new FileDomain();
+            fileDomain.setYearMonth(ss);
+            //先设置yearMonth，再设置List<ArticleTypeTag>
+            ArrayList<ArticleTypeTag> articleTypeTags = new ArrayList<>();
+            for(ContentDomain contentDomain : articles){
+                String yearMonth = contentDomain.getCreated().split("-")[0] + "年" + contentDomain.getCreated().split("-")[1] + "月";
+                if(ss.equals(yearMonth)){
+                    ArticleTypeTag articleTypeTag = new ArticleTypeTag();
+                    List<Integer> cTagids = contentTagRelService.getCTagidByCid(contentDomain.getCid());
+                    String s = new String();
+                    for(Integer ctagid : cTagids){
+                        String tagDomainname = contentTagService.getCTagDomainByCtagid(ctagid).getName();
+                        s = s + tagDomainname + ' ';
+                    }
+                    articleTypeTag.setTags(s);
+                    articleTypeTag.setContentDomain(contentDomain);
+                    articleTypeTags.add(articleTypeTag);
+                }
+            }
+            fileDomain.setArticleTypeTagList(articleTypeTags);
+            fileDomains.add(fileDomain);
+        }
+        return fileDomains;
+    }
 }
