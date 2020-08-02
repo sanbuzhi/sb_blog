@@ -32,9 +32,15 @@ public class HomeController {
     @Autowired
     private ContentTypeService contentTypeService;
 
+
     @GetMapping(value = {"", "/index"})
     public String index(Model model, @RequestParam(value = "limit", defaultValue = "10") int limit) {
         return this.index(1, limit, model);
+    }
+
+    @RequestMapping("/tologin")
+    public String tologin(){
+        return "site/login";
     }
 
     @GetMapping(value = "/blog/page/{p}")
@@ -82,13 +88,4 @@ public class HomeController {
         return "site/file";
     }
 
-    /**
-     * 测试用，将被删除
-     */
-    @RequestMapping({"/test","/test/index"})
-    public String test(Model model,
-                       @RequestParam(value = "limit", defaultValue = "10") int limit)
-    {
-        return this.index(1, limit, model);
-    }
 }

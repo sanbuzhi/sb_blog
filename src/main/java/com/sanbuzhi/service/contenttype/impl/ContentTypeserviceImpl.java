@@ -8,6 +8,7 @@ import com.sanbuzhi.service.content.ContentService;
 import com.sanbuzhi.service.contenttype.ContentTypeService;
 import com.sanbuzhi.service.contenttyperel.ContentTypeRelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 @Service
 public class ContentTypeserviceImpl implements ContentTypeService {
     @Autowired
+    @Lazy
     private ContentService contentService;
 
     @Autowired
